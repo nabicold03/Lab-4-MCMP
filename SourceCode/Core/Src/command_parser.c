@@ -19,24 +19,25 @@ void command_parser_fsm(){
 	char hash='#';
 	switch(command_parse_status){
 		case Parser_Start:
-			if(memcmp(temp,exclamation,1)==0){
+			if(temp==exclamation){
 				//change state
 //				HAL_UART_Transmit(&huart2, &temp, 1, 50);
-				HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
+//				HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
 				command_parse_status=Check_Exclamation;
 			}
 			break;
 		case Check_Exclamation:
-			if(memcmp(temp,exclamation,1)!=0){
+			if(temp!=exclamation){
 				//change state
 //				HAL_UART_Transmit(&huart2, &temp, 1, 50);
-				HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
+//				HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
 				command_parse_status=Store_Buffer;
 			}
 			break;
 		case Store_Buffer:
-			if(memcmp(temp,hash,1)==0){
+			if(temp==hash){
 				//set flag and copy input to command_data
+				HAL_UART_Transmit(&huart2, temp, 1, 1000);
 				command_flag=1;
 				memcpy(command_data,buffer,sizeof(buffer));
 //				HAL_UART_Transmit(&huart2, command_data, sizeof(command_data), 1000);
@@ -47,7 +48,7 @@ void command_parser_fsm(){
 				HAL_UART_Transmit(&huart2, (void*) str, sprintf(str, "\n\r"), 50);
 
 				//test
-//				HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
+				HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
 
 				//change state
 				uart_status=IDLE;

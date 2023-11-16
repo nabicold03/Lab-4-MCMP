@@ -19,16 +19,17 @@ void uart_communication_fsm(){
 //			if(strncmp((const char*)command_data,"!RST#",5)==0){
 //			if(command_data=="#RST!"){
 			if(memcmp(command_data,"!RST#",5)==0){
-				HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
+//				HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
 				uart_status=Send_ADC;
 			} else {
 				HAL_UART_Transmit(&huart2, "Invalid Request\n\r", 19, 1000);
+				uart_status=IDLE;
 			}
 			command_flag=0;
 //			memset(command_data,'\0',MAX_BUFFER_SIZE);
 			break;
 		case Send_ADC:
-			if(checkok==1){
+			if(waitingok==0){
 				ADC_value = HAL_ADC_GetValue(&hadc1);
 			}
 			HAL_UART_Transmit(&huart2, "!ADC=", 5, 10);
@@ -43,9 +44,9 @@ void uart_communication_fsm(){
 //			if(command_data=="!OK#"){
 //			if(memcmp(command_data,"!OK#",4)==0){
 				uart_status=IDLE;
-				checkok=1;
+//				checkok=1;
 				waitingok=0;
-				HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
+//				HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
 				HAL_UART_Transmit(&huart2, "Everything is done!\n\r", 29, 1000);
 			} else {
 				if(timer_flag==1){
