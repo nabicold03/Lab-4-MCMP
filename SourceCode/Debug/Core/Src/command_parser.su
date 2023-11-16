@@ -1,0 +1,2 @@
+command_parser.c:10:6:copy	16	static
+command_parser.c:15:6:command_parser_fsm	24	static
