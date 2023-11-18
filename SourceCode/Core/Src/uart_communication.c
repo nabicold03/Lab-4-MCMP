@@ -40,9 +40,9 @@ void uart_communication_fsm(){
 			break;
 		case Check_OK:
 //			HAL_UART_Transmit(&huart2, command_data, MAX_BUFFER_SIZE, 1000);
-			if(strncmp((const char*)command_data,"!OK#",4)==0){
+//			if(strncmp((const char*)command_data,"!OK#",4)==0){
 //			if(command_data=="!OK#"){
-//			if(memcmp(command_data,"!OK#",4)==0){
+			if(memcmp(command_data,"!OK#",4)==0){
 				uart_status=IDLE;
 //				checkok=1;
 				waitingok=0;
@@ -50,6 +50,7 @@ void uart_communication_fsm(){
 				HAL_UART_Transmit(&huart2, "Everything is done!\n\r", 29, 1000);
 			} else {
 				if(timer_flag==1){
+					memset(buffer,'\0',sizeof(buffer));
 					HAL_UART_Transmit(&huart2, command_data, MAX_BUFFER_SIZE, 1000);
 					uart_status=Send_ADC;
 					checkok=0;

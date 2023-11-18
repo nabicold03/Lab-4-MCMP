@@ -27,7 +27,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-#include"global.h"
+//#include"global.h"
 #include"command_parser.h"
 #include"uart_communication.h"
 
