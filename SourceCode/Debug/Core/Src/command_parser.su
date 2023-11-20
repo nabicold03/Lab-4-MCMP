@@ -1,2 +1,3 @@
-command_parser.c:10:6:copy	16	static
-command_parser.c:15:6:command_parser_fsm	24	static
+command_parser.c:10:6:clearbuffer	8	static
+command_parser.c:14:6:StartUartFSM	4	static
+command_parser.c:18:6:command_parser_fsm	24	static

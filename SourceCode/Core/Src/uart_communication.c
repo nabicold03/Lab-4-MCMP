@@ -18,10 +18,11 @@ void uart_communication_fsm(){
 		case Check_RST:
 //			if(strncmp((const char*)command_data,"!RST#",5)==0){
 //			if(command_data=="#RST!"){
-			if(memcmp(command_data,"!RST#",5)==0){
+			if(memcmp(command_data,"RST#",4)==0){
 //				HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
 				uart_status=Send_ADC;
 			} else {
+				HAL_UART_Transmit(&huart2, command_data, sizeof(command_data), 1000);
 				HAL_UART_Transmit(&huart2, "Invalid Request\n\r", 19, 1000);
 				uart_status=IDLE;
 			}
@@ -42,7 +43,7 @@ void uart_communication_fsm(){
 //			HAL_UART_Transmit(&huart2, command_data, MAX_BUFFER_SIZE, 1000);
 //			if(strncmp((const char*)command_data,"!OK#",4)==0){
 //			if(command_data=="!OK#"){
-			if(memcmp(command_data,"!OK#",4)==0){
+			if(memcmp(command_data,"OK#",3)==0){
 				uart_status=IDLE;
 //				checkok=1;
 				waitingok=0;

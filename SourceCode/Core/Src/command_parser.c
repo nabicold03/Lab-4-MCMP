@@ -7,10 +7,13 @@
 
 #include "global.h"
 #include"command_parser.h"
-void copy(){
-	for(int i=0; i<sizeof(buffer); i++){
-		command_data[i]=buffer[i];
-	}
+void clearbuffer(){
+	memset(buffer,'\0',sizeof(buffer));
+	index_buffer=0;
+}
+void StartUartFSM(){
+	command_flag=1;
+	uart_status=IDLE;
 }
 void command_parser_fsm(){
 //	uint8_t exclamation="!";
@@ -19,31 +22,35 @@ void command_parser_fsm(){
 	char hash='#';
 	switch(command_parse_status){
 		case Parser_Start:
-			if(temp==exclamation){
+			if(temp!='!'){
 				//change state
-//				HAL_UART_Transmit(&huart2, &temp, 1, 50);
-//				HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
-				command_parse_status=Check_Exclamation;
+				if(temp=='#'){
+					StartUartFSM();
+				} else {
+					command_parse_status=Store_Buffer;
+				}
+			} else {
+				clearbuffer();
 			}
 			break;
-		case Check_Exclamation:
-			if(temp!=exclamation){
-				//change state
-//				HAL_UART_Transmit(&huart2, &temp, 1, 50);
-//				HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
-				command_parse_status=Store_Buffer;
-			}
-			break;
+//		case Check_Exclamation:
+//			if(temp!='!'){
+//				//change state
+//				command_parse_status=Store_Buffer;
+//			} else if(temp=='#'){
+//
+//			}
+//			break;
 		case Store_Buffer:
-			if(temp==hash){
+			if(temp=='!'){
+				clearbuffer();
+				command_parse_status=Parser_Start;
+			} else if(temp=='#'){
 				//set flag and copy input to command_data
 				HAL_UART_Transmit(&huart2, temp, 1, 1000);
-				command_flag=1;
 				memcpy(command_data,buffer,sizeof(buffer));
-//				HAL_UART_Transmit(&huart2, command_data, sizeof(command_data), 1000);
-//				HAL_UART_Transmit(&huart2, buffer, sizeof(buffer), 1000);
-				memset(buffer,'\0',sizeof(buffer));
-				index_buffer=0;
+				clearbuffer();
+	//			index_buffer=0;
 				void *str="";
 				HAL_UART_Transmit(&huart2, (void*) str, sprintf(str, "\n\r"), 50);
 
@@ -51,7 +58,7 @@ void command_parser_fsm(){
 				HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
 
 				//change state
-				uart_status=IDLE;
+				StartUartFSM();
 				command_parse_status=Parser_Start;
 			}
 			break;
