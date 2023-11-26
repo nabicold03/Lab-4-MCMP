@@ -74,10 +74,6 @@ void HAL_UART_RxCpltCallback ( UART_HandleTypeDef * huart ) {
 		HAL_UART_Receive_IT(&huart2, &temp, 1);
 		HAL_UART_Transmit(&huart2, &temp, 1, 100);
 	}
-//	if(huart->Instance == USART2){
-//		HAL_UART_Transmit(&huart2, &temp, 1, 50);
-//		HAL_UART_Receive_IT(&huart2, &temp, 1);
-//	}
 }
 /* USER CODE END 0 */
 
@@ -127,12 +123,7 @@ int main(void)
 		  command_parser_fsm();
 		  buffer_flag=0;
 	  }
-//	  if(command_flag==1){
-//		  uart_communication_fsm();
-////		  command_flag=0;
-//	  }
 	  uart_communication_fsm();
-//	  uart_communication_fsm();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

@@ -7,50 +7,43 @@
 
 #include "global.h"
 #include"command_parser.h"
+
+//function to clear the buffer array
 void clearbuffer(){
 	memset(buffer,'\0',sizeof(buffer));
 	index_buffer=0;
 }
+
+//set environment for UART FSM
 void StartUartFSM(){
 	command_flag=1;
 	uart_status=IDLE;
 }
+
 void command_parser_fsm(){
-//	uint8_t exclamation="!";
-//	uint8_t hash="#";
-	char exclamation='!';
-	char hash='#';
 	switch(command_parse_status){
 		case Parser_Start:
 			if(temp!='!'){
 				//change state
-				if(temp=='#'){
+				if(temp=='#'){	//if user input !!!!!! then # => send data to UART FSM
 					StartUartFSM();
 				} else {
-					command_parse_status=Store_Buffer;
+					command_parse_status=Store_Buffer;	//else change state to start storing data into the buffer
 				}
 			} else {
-				clearbuffer();
+				clearbuffer();	//if user input ! => clear this
 			}
 			break;
-//		case Check_Exclamation:
-//			if(temp!='!'){
-//				//change state
-//				command_parse_status=Store_Buffer;
-//			} else if(temp=='#'){
-//
-//			}
-//			break;
 		case Store_Buffer:
-			if(temp=='!'){
-				clearbuffer();
+			if(temp=='!'){		//if user type ! => comeback to Parser_Start above
+				clearbuffer();	//clear the buffer before coming back
 				command_parse_status=Parser_Start;
-			} else if(temp=='#'){
+			} else if(temp=='#'){		//Now if user type in the hash symbol
 				//set flag and copy input to command_data
-				HAL_UART_Transmit(&huart2, temp, 1, 1000);
 				memcpy(command_data,buffer,sizeof(buffer));
 				clearbuffer();
-	//			index_buffer=0;
+
+				//Enter to new line
 				void *str="";
 				HAL_UART_Transmit(&huart2, (void*) str, sprintf(str, "\n\r"), 50);
 
@@ -58,7 +51,7 @@ void command_parser_fsm(){
 				HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
 
 				//change state
-				StartUartFSM();
+				StartUartFSM();		//set command_flag to 1 and uart_status to IDLE (1st stage)
 				command_parse_status=Parser_Start;
 			}
 			break;
